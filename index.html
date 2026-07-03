@@ -39,33 +39,59 @@
             color: #8b949e;
             font-size: 1.1rem;
             line-height: 1.5;
-            margin-bottom: 15px; /* Reduced to make room for version text */
+            margin-bottom: 12px;
         }
-        /* New Style for the Version Text */
+        
+        /* Updated Version Text Style */
         .version-display {
-            color: #58a6ff; 
-            font-size: 0.95rem;
+            color: #a78bfa; /* Soft purple to match the logo */
+            font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             display: block;
             letter-spacing: 0.5px;
-        }
-        .download-btn {
+            background: rgba(167, 139, 250, 0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
             display: inline-block;
-            background-color: #ffffff;
-            color: #000000;
-            padding: 16px 32px;
-            font-size: 1.1rem;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+        }
+
+        /* Modern, Interactive Gradient Button */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #6b21a8, #3b82f6); /* Kai Logo Colors */
+            color: #ffffff;
+            padding: 16px 36px;
+            font-size: 1.15rem;
             font-weight: 600;
             text-decoration: none;
             border-radius: 50px;
-            transition: transform 0.2s, opacity 0.2s;
-            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
         .download-btn:hover {
-            transform: scale(1.03);
-            opacity: 0.95;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+            background: linear-gradient(135deg, #7c3aed, #2563eb);
         }
+
+        .download-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Download Icon SVG */
+        .download-icon {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
         .footer {
             margin-top: 60px;
             font-size: 0.85rem;
@@ -80,10 +106,17 @@
         <h1>Kai</h1>
         <p>Experience ad-free anime and cinema streaming with a premium OLED aesthetic.</p>
         
-        <!-- Added Version Display -->
-        <span class="version-display" id="versionText">Fetching latest version...</span>
+        <!-- Enclosed in a styled pill -->
+        <div class="version-display" id="versionText">Fetching latest version...</div>
+        <br>
         
-        <a href="#" id="downloadLink" class="download-btn">Download Latest APK</a>
+        <a href="#" id="downloadLink" class="download-btn">
+            <!-- Modern Download SVG Icon -->
+            <svg class="download-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+            Download Latest APK
+        </a>
         
         <div class="footer">
             &copy; 2026 Kai. All Rights Reserved.
@@ -99,14 +132,22 @@
             .then(text => {
                 const lines = text.split('\n');
                 
-                // Update Version Text (Assuming line 0 is the version number)
                 if (lines.length > 0 && lines[0].trim() !== '') {
-                    document.getElementById('versionText').innerText = 'Latest Release: ' + lines[0].trim();
+                    let rawVersion = lines[0].trim();
+                    
+                    // Logic to automatically format "3" into "v3.0"
+                    if (!rawVersion.toLowerCase().startsWith('v')) {
+                        rawVersion = 'v' + rawVersion;
+                    }
+                    if (!rawVersion.includes('.')) {
+                        rawVersion = rawVersion + '.0';
+                    }
+                    
+                    document.getElementById('versionText').innerText = 'Latest Version: ' + rawVersion;
                 } else {
-                    document.getElementById('versionText').innerText = 'Latest Release';
+                    document.getElementById('versionText').innerText = 'Latest Version';
                 }
 
-                // Update Download Link (Assuming line 1 is the APK link)
                 if (lines.length >= 2 && lines[1].trim().startsWith('http')) {
                     document.getElementById('downloadLink').href = lines[1].trim();
                 } else {
