@@ -1,2 +1,2 @@
-3.1
-https://github.com/Alok20507/Kai-Release/releases/download/v3.1/Kai-v3.1.apk
+4
+https://github.com/Alok20507/Kai-Release/releases/download/v4.0/Kai-v4.0.apk
