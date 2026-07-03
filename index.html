@@ -22,9 +22,13 @@
             max-width: 400px;
             padding: 40px 20px;
         }
-        .logo {
-            font-size: 4rem;
-            margin-bottom: 10px;
+        /* Updated style for your icon */
+        .app-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
         h1 {
             font-size: 2.5rem;
@@ -54,9 +58,6 @@
             transform: scale(1.03);
             opacity: 0.95;
         }
-        .download-btn:active {
-            transform: scale(0.98);
-        }
         .footer {
             margin-top: 60px;
             font-size: 0.85rem;
@@ -67,11 +68,11 @@
 <body>
 
     <div class="container">
-        <div class="logo">🌙</div>
+        <!-- New Image Tag replacing the emoji -->
+        <img src="icon.png" alt="Kai Icon" class="app-icon">
         <h1>Kai</h1>
         <p>Experience ad-free anime and cinema streaming with a premium OLED aesthetic.</p>
         
-        <!-- The button that triggers our smart javascript download -->
         <a href="#" id="downloadLink" class="download-btn">Download Latest APK</a>
         
         <div class="footer">
@@ -80,14 +81,12 @@
     </div>
 
     <script>
-        // Smart script to fetch the current live link from version.txt dynamically!
         const txtUrl = 'https://raw.githubusercontent.com/Alok20507/Kai-Release/main/version.txt';
         const fallbackUrl = 'https://github.com/Alok20507/Kai-Release/releases';
 
         fetch(txtUrl)
             .then(response => response.text())
             .then(text => {
-                // Split lines and get Line 2 (index 1) which contains the absolute APK URL
                 const lines = text.split('\n');
                 if (lines.length >= 2 && lines[1].trim().startsWith('http')) {
                     document.getElementById('downloadLink').href = lines[1].trim();
@@ -100,6 +99,5 @@
                 document.getElementById('downloadLink').href = fallbackUrl;
             });
     </script>
-
 </body>
 </html>
