@@ -1,4 +1,6 @@
-# 🌙 Kai - Official Releases
+<img src="icon.png" alt="Kai Icon" width="100">
+
+# Kai - Official Releases
 
 Welcome to the official distribution repository for **Kai**, a premium, ad-free streaming client for anime and cinema. 
 
@@ -18,4 +20,4 @@ Kai features a custom-built, native background update engine. The application se
 To protect the integrity of our custom ad-blocking interceptors and premium streaming architecture, the core Kotlin source code for Kai is maintained in a separate, secure private repository. This public repository is strictly dedicated to hosting the compiled `.apk` files and the master versioning triggers for our users.
 
 ---
-*Crafted with precision by Alok *
+*Crafted with precision by Alok*
