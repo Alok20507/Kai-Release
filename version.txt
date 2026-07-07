@@ -1,2 +1,2 @@
-5
-https://github.com/Alok20507/Kai-Release/releases/download/v5.0/Kai-v5.0.apk
+6
+https://github.com/Alok20507/Kai-Release/releases/download/v6.0/Kai-v6.0.apk
