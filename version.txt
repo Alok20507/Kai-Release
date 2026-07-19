@@ -1,2 +1,2 @@
-6
-https://github.com/Alok20507/Kai-Release/releases/download/v6.0/Kai-v6.0.apk
+7
+https://github.com/Alok20507/Kai-Release/releases/download/v7.0/Kai-v7.0-arm64-v8a.apk
