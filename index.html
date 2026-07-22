@@ -21,11 +21,15 @@
       --purple: #9d7cff;
       --blue: #4d93ff;
       --pink: #e879f9;
+      --ease: cubic-bezier(.16,.84,.44,1);
     }
 
     * { box-sizing: border-box; }
 
-    html { background: var(--bg); }
+    html {
+      background: var(--bg);
+      scroll-behavior: smooth;
+    }
 
     body {
       min-height: 100vh;
@@ -34,11 +38,59 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
         "Segoe UI", sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(circle at 12% 8%, rgba(127, 70, 245, .26), transparent 29rem),
-        radial-gradient(circle at 88% 18%, rgba(54, 127, 255, .18), transparent 26rem),
-        radial-gradient(circle at 50% 100%, rgba(211, 90, 234, .13), transparent 29rem),
-        var(--bg);
+      background: var(--bg);
+      position: relative;
+    }
+
+    /* ---------- ambient background ---------- */
+    .bg-field {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(3px);
+      opacity: .55;
+      will-change: transform;
+    }
+
+    .orb--1 {
+      top: -12%; left: 4%;
+      width: 34rem; height: 34rem;
+      background: radial-gradient(circle, rgba(127,70,245,.30), transparent 70%);
+      animation: driftA 26s ease-in-out infinite;
+    }
+
+    .orb--2 {
+      top: 4%; right: -8%;
+      width: 30rem; height: 30rem;
+      background: radial-gradient(circle, rgba(54,127,255,.22), transparent 70%);
+      animation: driftB 32s ease-in-out infinite;
+    }
+
+    .orb--3 {
+      bottom: -18%; left: 30%;
+      width: 36rem; height: 36rem;
+      background: radial-gradient(circle, rgba(211,90,234,.16), transparent 70%);
+      animation: driftC 38s ease-in-out infinite;
+    }
+
+    @keyframes driftA {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(4%, 6%) scale(1.08); }
+    }
+    @keyframes driftB {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-6%, 4%) scale(1.05); }
+    }
+    @keyframes driftC {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-3%, -5%) scale(1.1); }
     }
 
     .noise {
@@ -46,10 +98,28 @@
       inset: 0;
       pointer-events: none;
       opacity: .045;
+      z-index: 1;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
     }
 
+    /* cursor glow */
+    .glow {
+      position: fixed;
+      top: 0; left: 0;
+      width: 480px; height: 480px;
+      margin-left: -240px; margin-top: -240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(157,124,255,.10), transparent 65%);
+      pointer-events: none;
+      z-index: 1;
+      transform: translate3d(-999px,-999px,0);
+      transition: opacity .3s ease;
+      opacity: 0;
+    }
+
     main {
+      position: relative;
+      z-index: 2;
       width: min(100% - 40px, 1040px);
       margin: 0 auto;
       padding: 28px 0 56px;
@@ -60,6 +130,13 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: clamp(56px, 10vw, 112px);
+      opacity: 0;
+      transform: translateY(-14px);
+      animation: fadeDown .7s var(--ease) .05s forwards;
+    }
+
+    @keyframes fadeDown {
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .brand {
@@ -80,16 +157,34 @@
       object-fit: cover;
       display: block;
       box-shadow: 0 8px 24px rgba(104, 86, 255, .35);
+      transition: transform .45s var(--ease), box-shadow .45s var(--ease);
+    }
+
+    .brand:hover .brand-mark {
+      transform: rotate(-8deg) scale(1.08);
+      box-shadow: 0 10px 30px rgba(104, 86, 255, .55);
     }
 
     .release-link {
+      position: relative;
       color: var(--muted);
       text-decoration: none;
       font-size: .9rem;
       transition: color .2s ease;
     }
 
+    .release-link::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 100%;
+      bottom: -3px;
+      height: 1px;
+      background: var(--text);
+      transition: right .3s var(--ease);
+    }
+
     .release-link:hover { color: var(--text); }
+    .release-link:hover::after { right: 0; }
 
     .hero {
       display: grid;
@@ -112,6 +207,13 @@
       font-weight: 700;
       letter-spacing: .06em;
       text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp .7s var(--ease) .15s forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .pulse {
@@ -120,6 +222,13 @@
       border-radius: 50%;
       background: #9dffbd;
       box-shadow: 0 0 0 4px rgba(157,255,189,.12);
+      animation: pulseRing 2.2s ease-out infinite;
+    }
+
+    @keyframes pulseRing {
+      0% { box-shadow: 0 0 0 0 rgba(157,255,189,.35); }
+      70% { box-shadow: 0 0 0 8px rgba(157,255,189,0); }
+      100% { box-shadow: 0 0 0 0 rgba(157,255,189,0); }
     }
 
     h1 {
@@ -128,13 +237,23 @@
       font-size: clamp(3rem, 7vw, 5.9rem);
       line-height: .94;
       letter-spacing: -.075em;
+      opacity: 0;
+      transform: translateY(22px);
+      animation: fadeUp .8s var(--ease) .26s forwards;
     }
 
     h1 span {
       color: transparent;
-      background: linear-gradient(105deg, #d6c7ff 15%, #b982ff 49%, #62a2ff 90%);
+      background: linear-gradient(105deg, #d6c7ff 12%, #b982ff 35%, #62a2ff 60%, #b982ff 85%);
+      background-size: 260% auto;
       -webkit-background-clip: text;
       background-clip: text;
+      animation: shimmer 7s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
     }
 
     .intro {
@@ -143,6 +262,9 @@
       color: var(--muted);
       font-size: clamp(1rem, 2vw, 1.16rem);
       line-height: 1.7;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp .7s var(--ease) .4s forwards;
     }
 
     .actions {
@@ -151,9 +273,13 @@
       align-items: center;
       gap: 14px;
       margin-top: 34px;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp .7s var(--ease) .52s forwards;
     }
 
     .download-btn {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -168,8 +294,23 @@
       font-size: 1rem;
       font-weight: 750;
       text-decoration: none;
-      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+      overflow: hidden;
+      isolation: isolate;
+      transition: transform .25s var(--ease), box-shadow .25s var(--ease), filter .25s ease;
     }
+
+    .download-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.35), transparent 70%);
+      background-size: 250% 100%;
+      background-position: 130% 0;
+      transition: background-position .7s var(--ease);
+    }
+
+    .download-btn:hover::before { background-position: -30% 0; }
 
     .download-btn:hover {
       transform: translateY(-3px);
@@ -177,12 +318,28 @@
       box-shadow: 0 20px 36px rgba(78, 105, 255, .42);
     }
 
-    .download-btn:active { transform: translateY(0); }
+    .download-btn:active { transform: translateY(-1px) scale(.98); }
 
     .download-btn svg {
       width: 19px;
       height: 19px;
       fill: currentColor;
+      transition: transform .3s var(--ease);
+    }
+
+    .download-btn:hover svg { transform: translateY(2px); }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,.55);
+      transform: scale(0);
+      animation: rippleOut .6s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes rippleOut {
+      to { transform: scale(1); opacity: 0; }
     }
 
     .version {
@@ -196,6 +353,27 @@
     .version strong {
       color: #e4dcff;
       font-weight: 700;
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(4px);
+      animation: fadeUp .5s var(--ease) forwards;
+    }
+
+    .device-wrap {
+      opacity: 0;
+      transform: translateY(24px) rotate(4deg);
+      animation: deviceIn .9s var(--ease) .35s forwards, deviceFloat 6s ease-in-out 1.25s infinite;
+      transform-style: preserve-3d;
+      perspective: 900px;
+    }
+
+    @keyframes deviceIn {
+      to { opacity: 1; transform: translateY(0) rotate(4deg); }
+    }
+
+    @keyframes deviceFloat {
+      0%, 100% { transform: translateY(0) rotate(4deg); }
+      50% { transform: translateY(-10px) rotate(2.2deg); }
     }
 
     .device {
@@ -207,7 +385,7 @@
       border-radius: 37px;
       background: linear-gradient(145deg, #2a2633, #0e0c14);
       box-shadow: 0 35px 90px rgba(0,0,0,.55), 0 0 70px rgba(116,82,255,.18);
-      transform: rotate(4deg);
+      will-change: transform;
     }
 
     .device::before {
@@ -224,6 +402,7 @@
     }
 
     .device-screen {
+      position: relative;
       aspect-ratio: 9 / 18;
       overflow: hidden;
       padding: 52px 18px 22px;
@@ -265,15 +444,41 @@
       margin-top: 18px;
       padding: 14px;
       border-radius: 18px;
+      opacity: 0;
+      transform: translateX(10px);
+      animation: cardSlide .6s var(--ease) forwards;
+    }
+
+    .screen-card:nth-of-type(2) { animation-delay: 1.1s; }
+    .screen-card:nth-of-type(3) { animation-delay: 1.3s; }
+
+    @keyframes cardSlide {
+      to { opacity: 1; transform: translateX(0); }
     }
 
     .thumb {
+      position: relative;
+      overflow: hidden;
       width: 56px;
       height: 56px;
       border-radius: 18px;
       background: linear-gradient(135deg, #965dff, #4c8fff);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.22);
       flex: 0 0 auto;
+    }
+
+    .thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,.5), transparent 40%);
+      background-size: 250% 100%;
+      animation: thumbSheen 3.4s ease-in-out infinite;
+    }
+
+    @keyframes thumbSheen {
+      0% { background-position: 140% 0; }
+      55%, 100% { background-position: -60% 0; }
     }
 
     .screen-card b {
@@ -300,6 +505,24 @@
       border-radius: 22px;
       background: var(--surface);
       backdrop-filter: blur(12px);
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .7s var(--ease), transform .7s var(--ease),
+        border-color .3s ease, box-shadow .3s ease;
+    }
+
+    .feature.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feature:nth-of-type(1) { transition-delay: 0s; }
+    .feature:nth-of-type(2) { transition-delay: .12s; }
+    .feature:nth-of-type(3) { transition-delay: .24s; }
+
+    .feature:hover {
+      border-color: rgba(157,124,255,.4);
+      box-shadow: 0 18px 44px rgba(80,50,180,.22);
     }
 
     .feature-icon {
@@ -313,6 +536,12 @@
       color: #d7cbff;
       font-size: 1.15rem;
       font-weight: 700;
+      transition: transform .4s var(--ease), background .3s ease;
+    }
+
+    .feature:hover .feature-icon {
+      transform: rotate(-10deg) scale(1.1);
+      background: rgba(157,124,255,.18);
     }
 
     .feature h2 {
@@ -333,25 +562,51 @@
       color: #7d7789;
       font-size: .86rem;
       text-align: center;
+      opacity: 0;
+      transition: opacity .8s var(--ease);
     }
+
+    footer.in-view { opacity: 1; }
 
     @media (max-width: 900px) {
       .hero { grid-template-columns: 1fr; text-align: center; }
       .intro { margin-right: auto; margin-left: auto; }
       .actions { justify-content: center; }
-      .device { margin-top: 14px; transform: rotate(2deg); }
+      .device-wrap { margin-top: 14px; }
       .features { grid-template-columns: 1fr; margin-top: 74px; }
       .release-link { display: none; }
+      .glow { display: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { transition: none !important; }
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+      }
+      nav, .eyebrow, h1, .intro, .actions, .device-wrap, .screen-card, .version strong {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .feature { opacity: 1 !important; transform: none !important; }
+    }
+
+    :focus-visible {
+      outline: 2px solid #b982ff;
+      outline-offset: 3px;
     }
   </style>
 </head>
 
 <body>
+  <div class="bg-field" aria-hidden="true">
+    <div class="orb orb--1"></div>
+    <div class="orb orb--2"></div>
+    <div class="orb orb--3"></div>
+  </div>
   <div class="noise"></div>
+  <div class="glow" id="cursorGlow"></div>
 
   <main>
     <nav>
@@ -392,18 +647,20 @@
         </div>
       </div>
 
-      <div class="device" aria-hidden="true">
-        <div class="device-screen">
-          <div class="screen-label">KAI</div>
-          <div class="screen-title">Your space,<br>your pace.</div>
-          <div class="screen-search">Find something to watch</div>
-          <div class="screen-card">
-            <div class="thumb"></div>
-            <div><b>Continue watching</b><small>Ready when you are</small></div>
-          </div>
-          <div class="screen-card">
-            <div class="thumb" style="background:linear-gradient(135deg,#4f8fff,#4dd8bd)"></div>
-            <div><b>Your library</b><small>Saved content</small></div>
+      <div class="device-wrap">
+        <div class="device" id="device" aria-hidden="true">
+          <div class="device-screen">
+            <div class="screen-label">KAI</div>
+            <div class="screen-title">Your space,<br>your pace.</div>
+            <div class="screen-search">Find something to watch</div>
+            <div class="screen-card">
+              <div class="thumb"></div>
+              <div><b>Continue watching</b><small>Ready when you are</small></div>
+            </div>
+            <div class="screen-card">
+              <div class="thumb" style="background:linear-gradient(135deg,#4f8fff,#4dd8bd)"></div>
+              <div><b>Your library</b><small>Saved content</small></div>
+            </div>
           </div>
         </div>
       </div>
@@ -466,6 +723,87 @@
         versionText.textContent = "Latest release";
         downloadLink.href = fallbackUrl;
       });
+
+    // ---------- interactive/animated enhancements (no content or link changes) ----------
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // scroll-triggered reveal for feature cards + footer
+    const revealTargets = document.querySelectorAll(".feature, footer");
+    if ("IntersectionObserver" in window && !reduceMotion) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2 });
+      revealTargets.forEach(el => io.observe(el));
+    } else {
+      revealTargets.forEach(el => el.classList.add("in-view"));
+    }
+
+    if (!reduceMotion) {
+      // cursor glow, lerped toward pointer position
+      const glow = document.getElementById("cursorGlow");
+      let gx = window.innerWidth / 2, gy = window.innerHeight / 2;
+      let tx = gx, ty = gy;
+      let glowActive = false;
+
+      window.addEventListener("pointermove", (e) => {
+        tx = e.clientX; ty = e.clientY;
+        if (!glowActive) { glow.style.opacity = "1"; glowActive = true; }
+      });
+      window.addEventListener("pointerleave", () => {
+        glow.style.opacity = "0"; glowActive = false;
+      });
+
+      function tickGlow() {
+        gx += (tx - gx) * 0.12;
+        gy += (ty - gy) * 0.12;
+        glow.style.transform = `translate3d(${gx}px, ${gy}px, 0)`;
+        requestAnimationFrame(tickGlow);
+      }
+      requestAnimationFrame(tickGlow);
+
+      // subtle 3D tilt on the phone mockup, following the pointer within the hero
+      const device = document.getElementById("device");
+      const hero = document.querySelector(".hero");
+      hero.addEventListener("pointermove", (e) => {
+        const rect = hero.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        device.style.transform = `rotateY(${px * 14}deg) rotateX(${-py * 14}deg)`;
+      });
+      hero.addEventListener("pointerleave", () => {
+        device.style.transform = "rotateY(0deg) rotateX(0deg)";
+      });
+
+      // magnetic pull for the download button
+      const btn = document.getElementById("downloadLink");
+      btn.addEventListener("pointermove", (e) => {
+        const rect = btn.getBoundingClientRect();
+        const mx = e.clientX - (rect.left + rect.width / 2);
+        const my = e.clientY - (rect.top + rect.height / 2);
+        btn.style.transform = `translate(${mx * 0.12}px, ${my * 0.28 - 3}px)`;
+      });
+      btn.addEventListener("pointerleave", () => {
+        btn.style.transform = "";
+      });
+
+      // click ripple (decorative only — does not intercept navigation)
+      btn.addEventListener("pointerdown", (e) => {
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height) * 1.6;
+        const ripple = document.createElement("span");
+        ripple.className = "ripple";
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+        ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+        btn.appendChild(ripple);
+        ripple.addEventListener("animationend", () => ripple.remove());
+      });
+    }
   </script>
 </body>
 </html>
