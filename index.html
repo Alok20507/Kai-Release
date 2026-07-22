@@ -7,6 +7,9 @@
   <meta name="description" content="Download the latest version of Kai for Android.">
   <title>Kai — Watch. Save. Dive in.</title>
 
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+
   <style>
     :root {
       --bg: #08070d;
@@ -62,7 +65,7 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       color: var(--text);
       font-size: 1.05rem;
       font-weight: 750;
@@ -73,9 +76,9 @@
     .brand-mark {
       width: 30px;
       height: 30px;
-      border: 1px solid rgba(255,255,255,.18);
       border-radius: 10px;
-      background: linear-gradient(135deg, #a789ff, #4d93ff);
+      object-fit: cover;
+      display: block;
       box-shadow: 0 8px 24px rgba(104, 86, 255, .35);
     }
 
@@ -259,84 +262,80 @@
       display: flex;
       gap: 11px;
       align-items: center;
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 16px;
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 18px;
     }
 
     .thumb {
-      width: 43px;
-      height: 43px;
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #965dff, #4c8fff);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.22);
       flex: 0 0 auto;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #c26dff, #4b93ff);
-    }
-
-    .screen-card b, .screen-card small {
-      display: block;
     }
 
     .screen-card b {
-      font-size: .76rem;
-      font-weight: 700;
+      display: block;
+      margin-bottom: 4px;
+      font-size: .82rem;
     }
 
     .screen-card small {
-      margin-top: 4px;
-      color: #9c96a9;
-      font-size: .65rem;
+      color: #aaa3b7;
+      font-size: .72rem;
     }
 
     .features {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: clamp(70px, 12vw, 130px);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 92px;
     }
 
     .feature {
       padding: 22px;
       border: 1px solid var(--line);
-      border-radius: 20px;
+      border-radius: 22px;
       background: var(--surface);
-      backdrop-filter: blur(15px);
+      backdrop-filter: blur(12px);
     }
 
     .feature-icon {
       display: grid;
-      width: 34px;
-      height: 34px;
-      margin-bottom: 16px;
-      border-radius: 11px;
       place-items: center;
-      color: #d9ceff;
-      background: rgba(157,124,255,.14);
-      font-size: 1.1rem;
+      width: 42px;
+      height: 42px;
+      margin-bottom: 16px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      color: #d7cbff;
+      font-size: 1.15rem;
+      font-weight: 700;
     }
 
     .feature h2 {
-      margin: 0;
-      font-size: 1rem;
-      letter-spacing: -.02em;
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+      letter-spacing: -.03em;
     }
 
     .feature p {
-      margin: 8px 0 0;
+      margin: 0;
       color: var(--muted);
-      font-size: .87rem;
-      line-height: 1.55;
+      line-height: 1.65;
+      font-size: .95rem;
     }
 
     footer {
-      margin-top: 55px;
-      color: #6e6878;
-      font-size: .8rem;
+      padding: 34px 0 8px;
+      color: #7d7789;
+      font-size: .86rem;
       text-align: center;
     }
 
-    @media (max-width: 720px) {
-      main { width: min(100% - 32px, 560px); }
-      nav { margin-bottom: 62px; }
+    @media (max-width: 900px) {
       .hero { grid-template-columns: 1fr; text-align: center; }
       .intro { margin-right: auto; margin-left: auto; }
       .actions { justify-content: center; }
@@ -357,7 +356,7 @@
   <main>
     <nav>
       <a class="brand" href="#">
-        <span class="brand-mark" aria-hidden="true"></span>
+        <img class="brand-mark" src="icon.png" alt="Kai icon">
         Kai
       </a>
       <a class="release-link" href="https://github.com/Alok20507/Kai-Release/releases" target="_blank" rel="noopener">
@@ -434,10 +433,8 @@
   </main>
 
   <script>
-    const versionUrl =
-      "https://raw.githubusercontent.com/Alok20507/Kai-Release/main/version.txt";
-    const fallbackUrl =
-      "https://github.com/Alok20507/Kai-Release/releases";
+    const versionUrl = "https://raw.githubusercontent.com/Alok20507/Kai-Release/main/version.txt";
+    const fallbackUrl = "https://github.com/Alok20507/Kai-Release/releases";
 
     const versionText = document.getElementById("versionText");
     const downloadLink = document.getElementById("downloadLink");
@@ -453,16 +450,17 @@
           .map(line => line.trim())
           .filter(Boolean);
 
-        const version = lines[0];
+        const updateCode = lines[0];
         const apkUrl = lines[1];
+        const displayVersion = lines[2] || updateCode;
 
-        versionText.textContent = version ? `v${version.replace(/^v/i, "")}` : "Latest release";
+        versionText.textContent = displayVersion
+          ? `v${displayVersion.replace(/^v/i, "")}`
+          : "Latest release";
 
-        if (apkUrl && /^https:\/\//i.test(apkUrl)) {
-          downloadLink.href = apkUrl;
-        } else {
-          downloadLink.href = fallbackUrl;
-        }
+        downloadLink.href = apkUrl && /^https:\/\//i.test(apkUrl)
+          ? apkUrl
+          : fallbackUrl;
       })
       .catch(() => {
         versionText.textContent = "Latest release";
